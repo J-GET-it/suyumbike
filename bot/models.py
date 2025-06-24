@@ -51,7 +51,7 @@ class Place(models.Model):
         ordering = ['-rating', 'name']
     
     def __str__(self):
-        return f"{self.name} ({self.get_category_display()})"
+        return f"{self.name}"
 
     def get_text(self):
         return f"Сегодня в {self.name}\n\n{self.description}\n\n📍 {self.address}\n💰 Средний чек: {self.average_check}\n⭐️ Рейтинг: {self.rating}"

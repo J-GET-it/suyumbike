@@ -64,6 +64,8 @@ def categories_handler(call: CallbackQuery):
             markup.add(InlineKeyboardButton(text=category_.name, callback_data=f"category_{category_.pk}"))
         if category.parent_category:
             markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
+        else:
+            markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
         markup.add(back_menu)
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
     else:
