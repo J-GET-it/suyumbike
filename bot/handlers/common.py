@@ -56,7 +56,7 @@ def categories_handler(call: CallbackQuery):
         status = 0
     category = Category.objects.get(pk=pk_)
     
-    if category.has_children:
+    if category.has_children():
         # Получаем подкатегории
         markup = InlineKeyboardMarkup()
         for category_ in Category.objects.filter(parent_category = category):
@@ -95,4 +95,4 @@ def categories_handler(call: CallbackQuery):
                 markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
         
             markup.add(back_menu)
-            bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text, reply_markup = markup)
+            bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text(), reply_markup = markup)
