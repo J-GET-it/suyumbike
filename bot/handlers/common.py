@@ -112,6 +112,7 @@ def categories_handler(call: CallbackQuery):
             bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text(), reply_markup = markup)
 
 
+# Обработчики служебных кнопок
 def back_handler(call: CallbackQuery):
     """Обработчик кнопки назад"""
     bot.clear_step_handler_by_chat_id(chat_id=call.message.chat.id)
@@ -119,3 +120,12 @@ def back_handler(call: CallbackQuery):
         bot.send_message(chat_id = call.message.chat.id, text = "Главное меню", reply_markup = START_KEYBOARD)
     else:
         bot.send_message(chat_id = call.message.chat.id, text = SUBSCRIBE_TEXT, reply_markup = CHECK_SUBSCRIPTION)
+
+
+def check_handler(call: CallbackQuery):
+    """Обработчик кнопки Проверить подписку"""
+    if bot.get_chat_member(chat_id = TARGET_CHAT_ID, user_id = call.message.chat.id).status in ["member", "administrator", "creator"]:
+        bot.send_message(chat_id = call.message.chat.id, text = "Главное меню", reply_markup = START_KEYBOARD)
+    else:
+        bot.send_message(chat_id = call.message.chat.id, text = SUBSCRIBE_TEXT, reply_markup = CHECK_SUBSCRIPTION)
+
