@@ -41,7 +41,7 @@ SUBSCRIBE_TEXT = """
 
 SUPPORT_TEXT = """
 Связь с нами: @ЗАГЛУШКА
-Разработчик бота: @ЗАГЛУШКА
+Разработчик бота: @artemchikk33
 """
 
 RECOMMEND_TEXT = """
