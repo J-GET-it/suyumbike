@@ -1,1 +1,1 @@
-from .common import start, where_to_go_handler, support_handler, recommend_handler, categories_handler, back_handler
+from .common import start, where_to_go_handler, support_handler, recommend_handler, categories_handler, back_handler, check_handler
