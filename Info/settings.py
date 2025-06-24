@@ -35,7 +35,9 @@ LOCAL = os.getenv("LOCAL")
 HOOK = os.getenv("HOOK")
 ALLOWED_HOSTS = ['*']
 
-
+BOT_COMMANDS=[
+    BotCommand('start', 'Главное меню')
+]
 # Application definition
 
 INSTALLED_APPS = [
