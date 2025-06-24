@@ -1,5 +1,6 @@
 import random
 
+from functools import wraps
 from telebot.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
 from bot import bot

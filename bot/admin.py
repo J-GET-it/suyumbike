@@ -24,4 +24,4 @@ class PlaceAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category']
+    list_display = ['name', 'parent_category']
