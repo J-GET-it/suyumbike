@@ -7,6 +7,7 @@ class Category(models.Model):
         'self',
         null=True,
         blank=True,
+        on_delete=models.CASCADE,
         help_text="Если подкатегория - выберите основную категорию"
     )
     name = models.CharField(max_length=200, verbose_name="Название категории")
