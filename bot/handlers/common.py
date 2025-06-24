@@ -102,7 +102,7 @@ def categories_handler(call: CallbackQuery):
             
             if category.parent_category:
                 try:
-                    markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
+                    markup.add(InlineKeyboardButton(text="Назад", callback_data=f"start_where"))
                 except Exception as e:
                     bot.send_message(chat_id=call.message.chat.id, text=e)
 
