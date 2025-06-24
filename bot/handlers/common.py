@@ -57,7 +57,7 @@ def categories_handler(call: CallbackQuery):
         status = 0
     category = Category.objects.get(pk=pk_)
     
-    if category.has_children():
+    if Category.objects.filter(parent_category = category).exists():
         # Получаем подкатегории
         markup = InlineKeyboardMarkup()
         for category_ in Category.objects.filter(parent_category = category):
