@@ -102,11 +102,10 @@ def categories_handler(call: CallbackQuery):
 
             markup.add(InlineKeyboardButton(text="Следующее место", callback_data=f"category_{category.pk}_1"))
             
-            if category.parent_category:
-                try:
-                    markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
-                except Exception as e:
-                    bot.send_message(chat_id=call.message.chat.id, text=e)
+            try:
+                markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
+            except Exception as e:
+                bot.send_message(chat_id=call.message.chat.id, text=e)
 
             markup.add(back_menu)
             bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text(), reply_markup = markup)

@@ -41,7 +41,6 @@ SUBSCRIBE_TEXT = """
 
 SUPPORT_TEXT = """
 Связь с нами: @huntersadmins
-Разработчик бота: @artemchikk33
 """
 
 RECOMMEND_TEXT = """
