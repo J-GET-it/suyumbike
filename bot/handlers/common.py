@@ -97,3 +97,12 @@ def categories_handler(call: CallbackQuery):
         
             markup.add(back_menu)
             bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text(), reply_markup = markup)
+
+
+def back_handler(call: CallbackQuery):
+    """Обработчик кнопки назад в меню"""
+
+    if bot.get_chat_member(chat_id = TARGET_CHAT_ID, user_id = call.message.chat.id).status in ["member", "administrator", "creator"]:
+        bot.send_message(chat_id = call.message.chat.id, text = "Главное меню", reply_markup = START_KEYBOARD)
+    else:
+        bot.send_message(chat_id = call.message.chat.id, text = SUBSCRIBE_TEXT, reply_markup = CHECK_SUBSCRIPTION)

@@ -54,3 +54,5 @@ support_handler = bot.callback_query_handler(lambda c: c.data=="start_support")(
 recommend_handler = bot.callback_query_handler(lambda c: c.data=="start_recommend")(recommend_handler)
 
 categories_handler = bot.callback_query_handler(lambda c: c.data.startswith("category_"))(categories_handler)
+
+back_handler = bot.callback_query_handler(lambda c: c.data == "back_menu")(categories_handler)

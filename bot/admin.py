@@ -11,7 +11,7 @@ class PlaceAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Основная информация', {
-            'fields': ('name', 'category', 'description', 'address')
+            'fields': ('name', 'category', 'description', 'address', 'photo')
         }),
         ('Финансы и рейтинг', {
             'fields': ('average_check', 'rating')
