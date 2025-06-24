@@ -78,7 +78,8 @@ def categories_handler(call: CallbackQuery):
         place = random.choice(places)
 
         if status == 0:
-            bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = category.description)
+            if category.description:
+                bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = category.description)
         with open(place.photo.path, 'rb') as photo:
             # Создаем кнопки с ссылками на соц.сети
             markup = InlineKeyboardMarkup()
@@ -96,7 +97,7 @@ def categories_handler(call: CallbackQuery):
             
             if category.parent_category:
                 try:
-                    markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{place.category.parent_category.pk}"))
+                    markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
                 except Exception as e:
                     bot.send_message(chat_id=call.message.chat.id, text=e)
 
@@ -105,7 +106,7 @@ def categories_handler(call: CallbackQuery):
 
 
 def back_handler(call: CallbackQuery):
-    """Обработчик кнопки назад в меню"""
+    """Обработчик кнопки назад"""
 
     if bot.get_chat_member(chat_id = TARGET_CHAT_ID, user_id = call.message.chat.id).status in ["member", "administrator", "creator"]:
         bot.send_message(chat_id = call.message.chat.id, text = "Главное меню", reply_markup = START_KEYBOARD)
