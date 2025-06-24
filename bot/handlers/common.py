@@ -95,7 +95,7 @@ def categories_handler(call: CallbackQuery):
             markup.add(InlineKeyboardButton(text="Следующее место", callback_data=f"category_{category.pk}_1"))
             
             if category.parent_category:
-                markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
+                markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{place.category.parent_category.pk}"))
         
             markup.add(back_menu)
             bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text(), reply_markup = markup)
