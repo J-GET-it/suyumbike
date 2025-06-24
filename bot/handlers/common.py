@@ -4,14 +4,14 @@ from functools import wraps
 from telebot.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
 from bot import bot
-from bot.texts import START_TEXT, TARGET_CHAT_ID, SUBSCRIBE_TEXT, SUPPORT_TEXT, RECOMMEND_TEXT
+from bot.texts import START_TEXT, TARGET_CHAT_ID, SUBSCRIBE_TEXT, SUPPORT_TEXT, RECOMMEND_TEXT, ADMIN_ID
 from bot.keyboards import START_KEYBOARD, CHECK_SUBSCRIPTION, BACK_BUTTON, back_menu
 from bot.models import Category, Place
 
 
 def start(message: Message):
     """Функция, вызываемая при /start"""
-
+    bot.clear_step_handler_by_chat_id(chat_id=message.chat.id)
     bot.send_message(chat_id = message.chat.id, text = START_TEXT)
     
     # Проверяем подписку человека на группу
@@ -43,8 +43,13 @@ def support_handler(call: CallbackQuery):
 def recommend_handler(call: CallbackQuery):
     """Обработчик кнопки Предложить заведение"""
 
-    bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = RECOMMEND_TEXT, reply_markup = BACK_BUTTON)
+    msg = bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = RECOMMEND_TEXT, reply_markup = BACK_BUTTON)
+    bot.register_next_step_handler(msg, register_recommend)
 
+def register_recommend(message: Message):
+    """Отправка предложения о новом месте"""
+    bot.send_message(chat_id=message.chat.id, text="Предложение успешно отправлено!")
+    bot.send_message(chat_id=ADMIN_ID, text=f"Новое предложение: \n\n{message.text}")
 
 # Обработчик кнопок Категорий и Подкатегорий
 def categories_handler(call: CallbackQuery):
@@ -107,7 +112,7 @@ def categories_handler(call: CallbackQuery):
 
 def back_handler(call: CallbackQuery):
     """Обработчик кнопки назад"""
-
+    bot.clear_step_handler_by_chat_id(chat_id=call.message.chat.id)
     if bot.get_chat_member(chat_id = TARGET_CHAT_ID, user_id = call.message.chat.id).status in ["member", "administrator", "creator"]:
         bot.send_message(chat_id = call.message.chat.id, text = "Главное меню", reply_markup = START_KEYBOARD)
     else:
