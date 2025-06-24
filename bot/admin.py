@@ -20,9 +20,6 @@ class PlaceAdmin(admin.ModelAdmin):
             'fields': ('vk_link', 'instagram_link', 'telegram_link'),
             'classes': ('collapse',)
         }),
-        ('Системная информация', {
-            'classes': ('collapse',)
-        }),
     )
 
 @admin.register(Category)
