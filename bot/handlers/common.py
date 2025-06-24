@@ -87,27 +87,29 @@ def categories_handler(call: CallbackQuery):
         if status == 0:
             if category.description:
                 bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = category.description)
+       
+        # Создаем кнопки с ссылками на соц.сети
+        markup = InlineKeyboardMarkup()
+        if place.vk_link:
+            markup.add(InlineKeyboardButton(text="Посмотреть в ВК", url=place.vk_link))
+        if place.instagram_link:
+            markup.add(InlineKeyboardButton(text="Посмотреть в Instagram", url=place.instagram_link))
+        if place.telegram_link:
+            markup.add(InlineKeyboardButton(text="Посмотреть в Telegram", url=place.telegram_link))
+
+        # Создаем кнопку с ссылкой на Яндекс.Карты
+        markup.add(InlineKeyboardButton(text="Проложить маршрут", url=f"https://yandex.ru/maps/?text={place.name} {place.address}"))
+
+        markup.add(InlineKeyboardButton(text="Следующее место", callback_data=f"category_{category.pk}_1"))
+        
+        try:
+            markup.add(InlineKeyboardButton(text="Назад", callback_data=f"{category.parent_category.pk}"))
+        except Exception as e:
+            bot.send_message(chat_id=call.message.chat.id, text=e)
+
+        markup.add(back_menu)
+
         with open(place.photo.path, 'rb') as photo:
-            # Создаем кнопки с ссылками на соц.сети
-            markup = InlineKeyboardMarkup()
-            if place.vk_link:
-                markup.add(InlineKeyboardButton(text="Посмотреть в ВК", url=place.vk_link))
-            if place.instagram_link:
-                markup.add(InlineKeyboardButton(text="Посмотреть в Instagram", url=place.instagram_link))
-            if place.telegram_link:
-                markup.add(InlineKeyboardButton(text="Посмотреть в Telegram", url=place.telegram_link))
-
-            # Создаем кнопку с ссылкой на Яндекс.Карты
-            markup.add(InlineKeyboardButton(text="Проложить маршрут", url=f"https://yandex.ru/maps/?text={place.name} {place.address}"))
-
-            markup.add(InlineKeyboardButton(text="Следующее место", callback_data=f"category_{category.pk}_1"))
-            
-            try:
-                markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
-            except Exception as e:
-                bot.send_message(chat_id=call.message.chat.id, text=e)
-
-            markup.add(back_menu)
             bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text(), reply_markup = markup)
 
 
