@@ -48,6 +48,8 @@ def recommend_handler(call: CallbackQuery):
 
 def register_recommend(message: Message):
     """Отправка предложения о новом месте"""
+    if message.text == "/start":
+        start(message)
     bot.send_message(chat_id=message.chat.id, text="Предложение успешно отправлено!")
     bot.send_message(chat_id=ADMIN_ID, text=f"Новое предложение: \n\n{message.text}")
 
