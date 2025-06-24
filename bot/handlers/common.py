@@ -74,7 +74,10 @@ def categories_handler(call: CallbackQuery):
         else:
             markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
         markup.add(back_menu)
-        bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
+        try:
+            bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
+        except:
+            bot.send_message(chat_id = call.message.chat.id, text = "Выбери категорию", reply_markup = markup)
     else:
         # Получаем случайное место
         places = Place.objects.filter(category = category)
@@ -104,7 +107,6 @@ def categories_handler(call: CallbackQuery):
         
         try:
             markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
-            bot.send_message(chat_id=call.message.chat.id, text=category.parent_category.pk)
         except Exception as e:
             bot.send_message(chat_id=call.message.chat.id, text=e)
 
