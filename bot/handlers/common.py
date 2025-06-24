@@ -67,7 +67,7 @@ def categories_handler(call: CallbackQuery):
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
     else:
         # Получаем случайное место
-        places = Place.objects.filter(parent_category = category)
+        places = Place.objects.filter(category = category)
         try:
             places = places.remove(category)
         except:
