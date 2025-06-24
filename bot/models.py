@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Category(models.Model):
-    category = models.ForeignKey(
+    parent_category = models.ForeignKey(
         'self',
         null=True,
         blank=True,
@@ -20,7 +20,7 @@ class Category(models.Model):
         return f"{self.name}"
 
     def has_children(self):
-        if self.category is None:
+        if self.parent_category is None:
             return False
         return True
 

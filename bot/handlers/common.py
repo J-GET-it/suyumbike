@@ -26,7 +26,7 @@ def where_to_go_handler(call: CallbackQuery):
 
     # Получаем категории
     markup = InlineKeyboardMarkup()
-    for category in Category.objects.filter(category__isnull=True):
+    for category in Category.objects.filter(parent_category__isnull=True):
         markup.add(InlineKeyboardButton(text=category.name, callback_data=f"category_{category.pk}"))
     markup.add(back_menu)
 
@@ -42,34 +42,40 @@ def support_handler(call: CallbackQuery):
 def recommend_handler(call: CallbackQuery):
     """Обработчик кнопки Предложить заведение"""
 
-     bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = RECOMMEND_TEXT, reply_markup = BACK_BUTTON)
+    bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = RECOMMEND_TEXT, reply_markup = BACK_BUTTON)
 
 
 # Обработчик кнопок Категорий и Подкатегорий
 def categories_handler(call: CallbackQuery):
     """Обработчик кнопок Категорий и Подкатегорий"""
-
-    _, pk_ = call.data.split("_")
+    try:
+        _, pk_, status = call.data.split("_")
+        status = int(status)
+    except:
+        _, pk_ = call.data.split("_")
+        status = 0
     category = Category.objects.get(pk=pk_)
     
     if category.has_children:
         # Получаем подкатегории
         markup = InlineKeyboardMarkup()
-        for category_ in Category.objects.filter(category = category):
+        for category_ in Category.objects.filter(parent_category = category):
             markup.add(InlineKeyboardButton(text=category_.name, callback_data=f"category_{category_.pk}"))
-        if category.category:
-            markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.category.pk}"))
+        if category.parent_category:
+            markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
         markup.add(back_menu)
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
     else:
         # Получаем случайное место
-        places = Place.objects.filter(category = category)
+        places = Place.objects.filter(parent_category = category)
         try:
             places = places.remove(category)
         except:
             pass
         place = random.choice(places)
-        bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = category.description)
+
+        if status == 0:
+            bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = category.description)
         with open(place.photo.path, 'rb') as photo:
             # Создаем кнопки с ссылками на соц.сети
             markup = InlineKeyboardMarkup()
@@ -83,10 +89,10 @@ def categories_handler(call: CallbackQuery):
             # Создаем кнопку с ссылкой на Яндекс.Карты
             markup.add(InlineKeyboardButton(text="Проложить маршрут", url=f"https://yandex.ru/maps/?text={place.name} {place.address}"))
 
-            markup.add(InlineKeyboardButton(text="Следующее место", callback_data=f"category_{category.pk}"))
+            markup.add(InlineKeyboardButton(text="Следующее место", callback_data=f"category_{category.pk}_1"))
             
-            if category.category:
-                markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.category.pk}"))
+            if category.parent_category:
+                markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
         
             markup.add(back_menu)
             bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text, reply_markup = markup)
