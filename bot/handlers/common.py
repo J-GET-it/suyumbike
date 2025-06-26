@@ -76,13 +76,15 @@ def categories_handler(call: CallbackQuery):
     if Category.objects.filter(parent_category = category).exists():
         # Получаем подкатегории
         markup = InlineKeyboardMarkup()
-        for category_ in Category.objects.filter(parent_category = category):
+        for category_ in Category.objects.filter(parent_category = category).order_by('order'):
             markup.add(InlineKeyboardButton(text=category_.name, callback_data=f"category_{category_.pk}"))
+
         if category.parent_category:
             markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
         else:
             markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
         markup.add(back_menu)
+
         try:
             bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
         except:

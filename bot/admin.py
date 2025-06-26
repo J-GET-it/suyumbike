@@ -5,7 +5,7 @@ from .models import Place, Category
 
 @admin.register(Place)
 class PlaceAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'rating', 'average_check', 'address']
+    list_display = ['name', 'category', 'rating', 'average_check', 'address', ]
     list_filter = ['category', 'rating']
     search_fields = ['name', 'description', 'address']
     
@@ -24,4 +24,4 @@ class PlaceAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'parent_category']
+    list_display = ['name', 'parent_category', 'order']
