@@ -40,11 +40,11 @@ class Place(models.Model):
     rating = models.DecimalField(max_digits=3, decimal_places=1, verbose_name="Рейтинг", null=True, blank=True)
     
     # Необязательные поля
-    web_link = models.URLField(blank=True, null=True, verbose_name="Ссылка на сайт")
-    map_link = models.URLField(blank=True, null=True, verbose_name="Ссылка на Яндекс Картах")
-    vk_link = models.URLField(blank=True, null=True, verbose_name="Ссылка ВКонтакте")
-    instagram_link = models.URLField(blank=True, null=True, verbose_name="Ссылка в Instagram")
-    telegram_link = models.URLField(blank=True, null=True, verbose_name="Ссылка в Telegram")
+    web_link = models.CharField(blank=True, null=True,max_length=500, verbose_name="Ссылка на сайт")
+    map_link = models.CharField(blank=True, null=True,max_length=500,  verbose_name="Ссылка на Яндекс Картах")
+    vk_link = models.CharField(blank=True, null=True,max_length=500,  verbose_name="Ссылка ВКонтакте")
+    instagram_link = models.CharField(blank=True, null=True,max_length=500,  verbose_name="Ссылка в Instagram")
+    telegram_link = models.CharField(blank=True, null=True,max_length=500,  verbose_name="Ссылка в Telegram")
     photo = models.ImageField(blank=True, null=True, upload_to="image/")
     
     class Meta:
