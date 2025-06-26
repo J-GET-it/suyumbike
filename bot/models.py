@@ -57,7 +57,7 @@ class Place(models.Model):
 
     def get_text(self):
         text = f"Сегодня в {self.name}\n\n{self.description}\n\n"
-        if self.adress:
+        if self.address:
             text += f"📍 {self.address}\n"
         if self.average_check:
             text += f"💰 Средний чек: {self.average_check}\n"
