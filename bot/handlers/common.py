@@ -64,11 +64,13 @@ def register_recommend(message: Message):
 def categories_handler(call: CallbackQuery):
     """Обработчик кнопок Категорий и Подкатегорий"""
     try:
-        _, pk_, status = call.data.split("_")
+        _, pk_, status, place_pk = call.data.split("_")
         status = int(status)
+        place_pk = int(place_pk)
     except:
         _, pk_ = call.data.split("_")
         status = 0
+        place_pk = -1
     category = Category.objects.get(pk=pk_)
     
     if Category.objects.filter(parent_category = category).exists():
@@ -89,7 +91,8 @@ def categories_handler(call: CallbackQuery):
         # Получаем случайное место
         places = Place.objects.filter(category = category)
         try:
-            places = places.remove(category)
+            if place_pk != -1 and len(places) > 1:
+                places = places.remove(Place.objects.get(pk=place_pk))
         except:
             pass
         place = random.choice(places)
@@ -113,7 +116,7 @@ def categories_handler(call: CallbackQuery):
         if place.map_link:
             markup.add(InlineKeyboardButton(text="Проложить маршрут", url=f"{place.map_link}"))
 
-        markup.add(InlineKeyboardButton(text="Следующее место", callback_data=f"category_{category.pk}_1"))
+        markup.add(InlineKeyboardButton(text="Следующее место", callback_data=f"category_{category.pk}_1_{place.pk}"))
         
         try:
             markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
@@ -122,9 +125,11 @@ def categories_handler(call: CallbackQuery):
 
         markup.add(back_menu)
 
-        with open(place.photo.path, 'rb') as photo:
-            bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text(), reply_markup = markup)
-
+        if place.photo:
+            with open(place.photo.path, 'rb') as photo:
+                bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text(), reply_markup = markup)
+        else:
+            bot.send_message(chat_id = call.message.chat.id, text = place.get_text(), reply_markup = markup)
 
 # Обработчики служебных кнопок
 def back_handler(call: CallbackQuery):
