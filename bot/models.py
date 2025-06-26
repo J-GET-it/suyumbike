@@ -35,11 +35,13 @@ class Place(models.Model):
 
     name = models.CharField(max_length=200, verbose_name="Название места")
     description = models.TextField(verbose_name="Описание")
-    address = models.CharField(max_length=500, verbose_name="Адрес")
-    average_check = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Средний чек")
-    rating = models.DecimalField(max_digits=3, decimal_places=1, verbose_name="Рейтинг")
+    address = models.CharField(max_length=500, verbose_name="Адрес", null=True, blank=True)
+    average_check = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Средний чек", null=True, blank=True)
+    rating = models.DecimalField(max_digits=3, decimal_places=1, verbose_name="Рейтинг", null=True, blank=True)
     
     # Необязательные поля
+    web_link = models.URLField(blank=True, null=True, verbose_name="Ссылка на сайт")
+    map_link = models.URLField(blank=True, null=True, verbose_name="Ссылка на Яндекс Картах")
     vk_link = models.URLField(blank=True, null=True, verbose_name="Ссылка ВКонтакте")
     instagram_link = models.URLField(blank=True, null=True, verbose_name="Ссылка в Instagram")
     telegram_link = models.URLField(blank=True, null=True, verbose_name="Ссылка в Telegram")
@@ -54,4 +56,11 @@ class Place(models.Model):
         return f"{self.name}"
 
     def get_text(self):
-        return f"Сегодня в {self.name}\n\n{self.description}\n\n📍 {self.address}\n💰 Средний чек: {self.average_check}\n⭐️ Рейтинг: {self.rating}"
+        text = f"Сегодня в {self.name}\n\n{self.description}\n\n"
+        if self.adress:
+            text += f"📍 {self.address}\n"
+        if self.average_check:
+            text += f"💰 Средний чек: {self.average_check}\n"
+        if self.rating:
+            text += f"⭐️ Рейтинг: {self.rating}"
+        return text

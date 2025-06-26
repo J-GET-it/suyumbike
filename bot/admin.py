@@ -17,7 +17,7 @@ class PlaceAdmin(admin.ModelAdmin):
             'fields': ('average_check', 'rating')
         }),
         ('Социальные сети', {
-            'fields': ('vk_link', 'instagram_link', 'telegram_link'),
+            'fields': ('map_link', 'vk_link', 'instagram_link', 'telegram_link', 'web_link'),
             'classes': ('collapse',)
         }),
     )

@@ -4,7 +4,7 @@ from functools import wraps
 from telebot.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
 from bot import bot
-from bot.texts import START_TEXT, TARGET_CHAT_ID, SUBSCRIBE_TEXT, SUPPORT_TEXT, RECOMMEND_TEXT, ADMIN_ID
+from bot.texts import START_TEXT, TARGET_CHAT_ID, SUBSCRIBE_TEXT, SUPPORT_TEXT, RECOMMEND_TEXT, ADMIN_ID, HOW_TO_TEXT
 from bot.keyboards import START_KEYBOARD, CHECK_SUBSCRIPTION, BACK_BUTTON, back_menu
 from bot.models import Category, Place
 
@@ -45,6 +45,13 @@ def recommend_handler(call: CallbackQuery):
 
     msg = bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = RECOMMEND_TEXT, reply_markup = BACK_BUTTON)
     bot.register_next_step_handler(msg, register_recommend)
+
+
+def how_to_hanlder(call: CallbackQuery):
+    """Обработчик кнопки Предложить заведение"""
+
+    bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = HOW_TO_TEXT, reply_markup = BACK_BUTTON)
+
 
 def register_recommend(message: Message):
     """Отправка предложения о новом месте"""
@@ -93,6 +100,8 @@ def categories_handler(call: CallbackQuery):
        
         # Создаем кнопки с ссылками на соц.сети
         markup = InlineKeyboardMarkup()
+        if place.web_link:
+            markup.add(InlineKeyboardButton(text="Перейти на сайт", url=place.web_link))
         if place.vk_link:
             markup.add(InlineKeyboardButton(text="Посмотреть в ВК", url=place.vk_link))
         if place.instagram_link:
@@ -101,7 +110,8 @@ def categories_handler(call: CallbackQuery):
             markup.add(InlineKeyboardButton(text="Посмотреть в Telegram", url=place.telegram_link))
 
         # Создаем кнопку с ссылкой на Яндекс.Карты
-        markup.add(InlineKeyboardButton(text="Проложить маршрут", url=f"https://yandex.ru/maps/?text={place.name} {place.address}"))
+        if place.map_link:
+            markup.add(InlineKeyboardButton(text="Проложить маршрут", url=f"{place.map_link}"))
 
         markup.add(InlineKeyboardButton(text="Следующее место", callback_data=f"category_{category.pk}_1"))
         
