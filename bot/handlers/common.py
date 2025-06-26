@@ -103,21 +103,25 @@ def categories_handler(call: CallbackQuery):
        
         # Создаем кнопки с ссылками на соц.сети
         markup = InlineKeyboardMarkup()
-        if place.web_link:
-            markup.add(InlineKeyboardButton(text="Перейти на сайт", url=place.web_link))
-        if place.vk_link:
-            markup.add(InlineKeyboardButton(text="Посмотреть в ВК", url=place.vk_link))
-        if place.instagram_link:
-            markup.add(InlineKeyboardButton(text="Посмотреть в Instagram", url=place.instagram_link))
-        if place.telegram_link:
-            markup.add(InlineKeyboardButton(text="Посмотреть в Telegram", url=place.telegram_link))
+        try:
+            if place.web_link:
+                markup.add(InlineKeyboardButton(text="Перейти на сайт", url=place.web_link))
+            if place.vk_link:
+                markup.add(InlineKeyboardButton(text="Посмотреть в ВК", url=place.vk_link))
+            if place.instagram_link:
+                markup.add(InlineKeyboardButton(text="Посмотреть в Instagram", url=place.instagram_link))
+            if place.telegram_link:
+                markup.add(InlineKeyboardButton(text="Посмотреть в Telegram", url=place.telegram_link))
 
-        # Создаем кнопку с ссылкой на Яндекс.Карты
-        if place.map_link:
-            markup.add(InlineKeyboardButton(text="Проложить маршрут", url=f"{place.map_link}"))
+            # Создаем кнопку с ссылкой на Яндекс.Карты
+            if place.map_link:
+                markup.add(InlineKeyboardButton(text="Проложить маршрут", url=f"{place.map_link}"))
 
-        markup.add(InlineKeyboardButton(text="Следующее место", callback_data=f"category_{category.pk}_1_{place.pk}"))
+            markup.add(InlineKeyboardButton(text="Следующее место", callback_data=f"category_{category.pk}_1_{place.pk}"))
         
+        except Exception as e:
+            bot.send_message(chat_id=call.message.chat.id, text=e)
+
         try:
             if category.parent_category:
                 markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
@@ -128,11 +132,14 @@ def categories_handler(call: CallbackQuery):
 
         markup.add(back_menu)
 
-        if place.photo:
-            with open(place.photo.path, 'rb') as photo:
-                bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text(), reply_markup = markup)
-        else:
-            bot.send_message(chat_id = call.message.chat.id, text = place.get_text(), reply_markup = markup)
+        try:
+            if place.photo:
+                with open(place.photo.path, 'rb') as photo:
+                    bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text(), reply_markup = markup)
+            else:
+                bot.send_message(chat_id = call.message.chat.id, text = place.get_text(), reply_markup = markup)
+        except Exception as e:
+            bot.send_message(chat_id=call.message.chat.id, text=e)
 
 # Обработчики служебных кнопок
 def back_handler(call: CallbackQuery):
