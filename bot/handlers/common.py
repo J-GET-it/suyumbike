@@ -47,7 +47,7 @@ def recommend_handler(call: CallbackQuery):
     bot.register_next_step_handler(msg, register_recommend)
 
 
-def how_to_hanlder(call: CallbackQuery):
+def how_to_handler(call: CallbackQuery):
     """Обработчик кнопки Предложить заведение"""
 
     bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = HOW_TO_TEXT, reply_markup = BACK_BUTTON)
