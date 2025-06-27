@@ -5,11 +5,10 @@ back_menu = InlineKeyboardButton(text="На главную", callback_data="back
 BACK_BUTTON.add(back_menu)
 
 START_KEYBOARD = InlineKeyboardMarkup()
-where_to_go = InlineKeyboardButton(text="🎯 Куда сходить сегодня?", callback_data="start_where")
-support = InlineKeyboardButton(text="💬 Обратная связь", callback_data="start_support")
-recommend_place = InlineKeyboardButton(text="💡 Предложить заведение", callback_data="start_recommend")
+where_to_go = InlineKeyboardButton(text="🎯 Куда сходить?", callback_data="start_where")
+support = InlineKeyboardButton(text="📲 Обратная связь", callback_data="start_support")
 how_to_enter = InlineKeyboardButton(text="Как попасть в бот?", callback_data="start_how-to")
-START_KEYBOARD.add(where_to_go).add(support).add(recommend_place).add(how_to_enter)
+START_KEYBOARD.add(where_to_go).add(support).add(how_to_enter)
 
 CHECK_SUBSCRIPTION = InlineKeyboardMarkup()
 check_button = InlineKeyboardButton(text="✅ Проверить подписку", callback_data="check")

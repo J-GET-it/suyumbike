@@ -30,8 +30,10 @@ def where_to_go_handler(call: CallbackQuery):
     for category in Category.objects.filter(parent_category__isnull=True):
         markup.add(InlineKeyboardButton(text=category.name, callback_data=f"category_{category.pk}"))
     markup.add(back_menu)
-
-    bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
+    try:
+        bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
+    except:
+        bot.send_message(chat_id = call.message.chat.id, text = "Выбери категорию", reply_markup = markup)
 
 
 def support_handler(call: CallbackQuery):
@@ -40,25 +42,10 @@ def support_handler(call: CallbackQuery):
     bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = SUPPORT_TEXT, reply_markup = BACK_BUTTON)
 
 
-def recommend_handler(call: CallbackQuery):
-    """Обработчик кнопки Предложить заведение"""
-
-    msg = bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = RECOMMEND_TEXT, reply_markup = BACK_BUTTON)
-    bot.register_next_step_handler(msg, register_recommend)
-
-
 def how_to_handler(call: CallbackQuery):
     """Обработчик кнопки Предложить заведение"""
 
     bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = HOW_TO_TEXT, reply_markup = BACK_BUTTON)
-
-
-def register_recommend(message: Message):
-    """Отправка предложения о новом месте"""
-    if message.text == "/start":
-        start(message)
-    bot.send_message(chat_id=message.chat.id, text="Предложение успешно отправлено!")
-    bot.send_message(chat_id=ADMIN_ID, text=f"Новое предложение: \n\n{message.text}")
 
 # Обработчик кнопок Категорий и Подкатегорий
 def categories_handler(call: CallbackQuery):
@@ -93,7 +80,7 @@ def categories_handler(call: CallbackQuery):
         # Получаем случайное место
         places = Place.objects.filter(category = category)
         try:
-            if place_pk != -1 and len(places) > 1:
+            if place_pk != -1 and places.count() > 1:
                 places = places.remove(Place.objects.get(pk=place_pk))
         except:
             pass

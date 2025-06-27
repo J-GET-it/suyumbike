@@ -23,10 +23,6 @@ class Category(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-    def has_children(self):
-        if self.parent_category is None:
-            return False
-        return True
 
 class Place(models.Model):
     category = models.ForeignKey(
@@ -58,7 +54,7 @@ class Place(models.Model):
         return f"{self.name}"
 
     def get_text(self):
-        text = f"Сегодня в {self.name}\n\n{self.description}\n\n"
+        text = f"{self.name}\n\n{self.description}\n\n"
         if self.address:
             text += f"📍 {self.address}\n"
         if self.average_check:
