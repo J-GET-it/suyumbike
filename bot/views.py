@@ -51,7 +51,6 @@ start = bot.message_handler(commands=['start'])(start)
 
 where_to_go_handler = bot.callback_query_handler(lambda c: c.data=="start_where")(where_to_go_handler)
 support_handler = bot.callback_query_handler(lambda c: c.data=="start_support")(support_handler)
-recommend_handler = bot.callback_query_handler(lambda c: c.data=="start_recommend")(recommend_handler)
 how_to_handler = bot.callback_query_handler(lambda c: c.data=="start_how-to")(how_to_handler)
 
 categories_handler = bot.callback_query_handler(lambda c: c.data.startswith("category_"))(categories_handler)
