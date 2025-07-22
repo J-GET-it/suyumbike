@@ -29,8 +29,10 @@ SECRET_KEY = 'django-insecure-=6&8i0@g4r+i%e8wn67#j9(9$5-2q%wz_j!9^foltro%9nj#k%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ADMIN_ID = 648707831
-TARGET_CHAT_ID = "@huntersmediaa"
+#ADMIN_ID = 648707831
+ADMIN_ID = 564517767
+#TARGET_CHAT_ID = "@huntersmediaa"
+TARGET_CHAT_ID = "@i_am_pathetic"
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OWNER_ID = os.getenv("OWNER_ID")
 LOCAL = os.getenv("LOCAL")
