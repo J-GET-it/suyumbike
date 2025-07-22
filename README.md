@@ -53,7 +53,7 @@
 
 1. Клонируйте репозиторий:
    ```
-   git clone <repo_url>
+   git clone git@github.com:J-GET-it/suyumbike.git
    cd suyumbike
    ```
 
@@ -72,6 +72,7 @@
 
 4. Примените миграции:
    ```
+   python manage.py makemigrations
    python manage.py migrate
    ```
 
