@@ -44,6 +44,7 @@ class Place(models.Model):
     instagram_link = models.CharField(blank=True, null=True,max_length=500,  verbose_name="Ссылка в Instagram")
     telegram_link = models.CharField(blank=True, null=True,max_length=500,  verbose_name="Ссылка в Telegram")
     photo = models.ImageField(blank=True, null=True, upload_to="image/")
+    date_until = models.DateField(null=True, blank=True, verbose_name="Показывать до (включительно)")
     
     class Meta:
         verbose_name = "Место"
@@ -62,3 +63,15 @@ class Place(models.Model):
         if self.rating:
             text += f"⭐️ Рейтинг: {self.rating}"
         return text
+
+
+class User(models.Model):
+    telegram_id = models.CharField(primary_key=True, max_length=32, verbose_name="Telegram ID")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата регистрации")
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
+    def __str__(self):
+        return self.telegram_id

@@ -7,10 +7,15 @@ from bot import bot
 from bot.texts import START_TEXT, TARGET_CHAT_ID, SUBSCRIBE_TEXT, SUPPORT_TEXT, HOW_TO_TEXT
 from bot.keyboards import START_KEYBOARD, CHECK_SUBSCRIPTION, BACK_BUTTON, back_menu
 from bot.models import Category, Place
+from bot.models import User
+from datetime import date
+from django.db import models
 
 
 def start(message: Message):
     """Функция, вызываемая при /start"""
+    # Создаем пользователя, если его еще нет
+    User.objects.get_or_create(telegram_id=str(message.chat.id))
     bot.clear_step_handler_by_chat_id(chat_id=message.chat.id)
     bot.send_message(chat_id = message.chat.id, text = START_TEXT)
     
@@ -51,46 +56,71 @@ def how_to_handler(call: CallbackQuery):
 def categories_handler(call: CallbackQuery):
     """Обработчик кнопок Категорий и Подкатегорий"""
     try:
-        _, pk_, status, place_pk = call.data.split("_")
-        status = int(status)
-        place_pk = int(place_pk)
-    except:
+        parts = call.data.split("_")
+        if len(parts) == 5:
+            _, pk_, status, place_pk, shown_pks = parts
+            status = int(status)
+            place_pk = int(place_pk)
+            shown_pks = list(map(int, shown_pks.split(",")) if shown_pks else [])
+        elif len(parts) == 4:
+            _, pk_, status, place_pk = parts
+            status = int(status)
+            place_pk = int(place_pk)
+            shown_pks = [place_pk] if place_pk != -1 else []
+        else:
+            _, pk_ = parts
+            status = 0
+            place_pk = -1
+            shown_pks = []
+    except Exception as e:
         _, pk_ = call.data.split("_")
         status = 0
         place_pk = -1
+        shown_pks = []
     category = Category.objects.get(pk=pk_)
     
     if Category.objects.filter(parent_category = category).exists():
-        # Получаем подкатегории
         markup = InlineKeyboardMarkup()
         for category_ in Category.objects.filter(parent_category = category).order_by('order'):
             markup.add(InlineKeyboardButton(text=category_.name, callback_data=f"category_{category_.pk}"))
-
         if category.parent_category:
             markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
         else:
             markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
         markup.add(back_menu)
-
         try:
             bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
         except:
             bot.send_message(chat_id = call.message.chat.id, text = "Выбери категорию", reply_markup = markup)
     else:
-        # Получаем случайное место
-        places = Place.objects.filter(category = category)
-        try:
-            if place_pk != -1 and places.count() > 1:
-                places = places.remove(Place.objects.get(pk=place_pk))
-        except:
-            pass
-        place = random.choice(places)
-
+        # Получаем все места в категории
+        all_places = Place.objects.filter(category=category).filter(
+            models.Q(date_until__isnull=True) | models.Q(date_until__gte=date.today())
+        )
+        # Если мест нет вообще (первый показ)
+        if not all_places.exists():
+            markup = InlineKeyboardMarkup()
+            if category.parent_category:
+                markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
+            else:
+                markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
+            markup.add(back_menu)
+            try:
+                bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Нет доступных мест в этой категории.", reply_markup=markup)
+            except Exception:
+                bot.send_message(chat_id=call.message.chat.id, text="Нет доступных мест в этой категории.", reply_markup=markup)
+            return
+        # Исключаем уже показанные
+        places = all_places.exclude(pk__in=shown_pks) if shown_pks else all_places
+        # Если все места уже были показаны, сбрасываем shown_pks и показываем заново, но исключаем последнее показанное место
+        if not places.exists():
+            shown_pks = []
+            places = all_places.exclude(pk=place_pk) if place_pk != -1 else all_places
+        place = random.choice(list(places))
+        shown_pks.append(place.pk)
         if status == 0:
             if category.description:
                 bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = category.description)
-       
-        # Создаем кнопки с ссылками на соц.сети
         markup = InlineKeyboardMarkup()
         try:
             if place.web_link:
@@ -101,16 +131,14 @@ def categories_handler(call: CallbackQuery):
                 markup.add(InlineKeyboardButton(text="Посмотреть в Instagram", url=place.instagram_link))
             if place.telegram_link:
                 markup.add(InlineKeyboardButton(text="Посмотреть в Telegram", url=place.telegram_link))
-
-            # Создаем кнопку с ссылкой на Яндекс.Карты
             if place.map_link:
                 markup.add(InlineKeyboardButton(text="Проложить маршрут", url=f"{place.map_link}"))
-
-            markup.add(InlineKeyboardButton(text="Следующее место", callback_data=f"category_{category.pk}_1_{place.pk}"))
-        
+            markup.add(InlineKeyboardButton(
+                text="Следующее место",
+                callback_data=f"category_{category.pk}_1_{place.pk}_{','.join(map(str, shown_pks))}"
+            ))
         except Exception as e:
             bot.send_message(chat_id=call.message.chat.id, text=e)
-
         try:
             if category.parent_category:
                 markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
@@ -118,9 +146,7 @@ def categories_handler(call: CallbackQuery):
                 markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
         except Exception as e:
             bot.send_message(chat_id=call.message.chat.id, text=e)
-
         markup.add(back_menu)
-
         try:
             if place.photo:
                 with open(place.photo.path, 'rb') as photo:
