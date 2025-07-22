@@ -53,7 +53,7 @@
 
 1. Клонируйте репозиторий:
    ```
-   git clone <repo_url>
+   git clone git@github.com:J-GET-it/suyumbike.git
    cd suyumbike
    ```
 
@@ -64,16 +64,15 @@
 
 3. Создайте файл `.env` и укажите переменные окружения:
    ```
-   BOT_TOKEN=ваш_токен_бота
-   OWNER_ID=ваш_telegram_id
-   LOCAL=True
-   HOOK=ваш_url_для_webhook
-   NAME_DB=имя_бд
-   PASS_DB=пароль_бд
+   BOT_TOKEN=
+   OWNER_ID=
+   LOCAL=
+   HOOK=
    ```
 
 4. Примените миграции:
    ```
+   python manage.py makemigrations
    python manage.py migrate
    ```
 
