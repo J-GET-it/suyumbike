@@ -38,7 +38,10 @@ def where_to_go_handler(call: CallbackQuery):
     try:
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
     except:
-        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        try:
+            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        except:
+            pass
         bot.send_message(chat_id = call.message.chat.id, text = "Выбери категорию", reply_markup = markup)
 
 
@@ -48,7 +51,10 @@ def support_handler(call: CallbackQuery):
     try:
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = SUPPORT_TEXT, reply_markup = BACK_BUTTON)
     except:
-        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        try:
+            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        except:
+            pass
         bot.send_message(chat_id = call.message.chat.id, text = SUPPORT_TEXT, reply_markup = BACK_BUTTON)
 
 
@@ -58,7 +64,10 @@ def how_to_handler(call: CallbackQuery):
     try:
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = HOW_TO_TEXT, reply_markup = BACK_BUTTON)
     except:
-        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        try:
+            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        except:
+            pass
         bot.send_message(chat_id = call.message.chat.id, text = HOW_TO_TEXT, reply_markup = BACK_BUTTON)
 
 # Обработчик кнопок Категорий и Подкатегорий
@@ -100,7 +109,10 @@ def categories_handler(call: CallbackQuery):
         try:
             bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
         except:
-            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+            try:
+                bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+            except:
+                pass
             bot.send_message(chat_id = call.message.chat.id, text = "Выбери категорию", reply_markup = markup)
     else:
         # Получаем все места в категории
@@ -161,7 +173,10 @@ def categories_handler(call: CallbackQuery):
             if status == 0:
                 if place.photo:
                     # Нельзя отредактировать текстовое сообщение в сообщение с фото.
-                    bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                    try:
+                        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                    except:
+                        pass
                     with open(place.photo.path, 'rb') as photo:
                         bot.send_photo(chat_id=call.message.chat.id, photo=photo, caption=place_text, reply_markup=markup)
                 else:
@@ -175,12 +190,18 @@ def categories_handler(call: CallbackQuery):
                              bot.edit_message_media(media=media, chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
                         else:
                             # prev text, new photo -> delete and send
-                            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                            try:
+                                bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                            except:
+                                pass
                             bot.send_photo(chat_id=call.message.chat.id, photo=photo_file, caption=place_text, reply_markup=markup)
                 else: # no new photo
                     if has_prev_photo:
                         # prev photo, new text -> delete and send
-                        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                        try:
+                            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                        except:
+                            pass
                         bot.send_message(chat_id=call.message.chat.id, text=place_text, reply_markup=markup)
                     else:
                         # prev text, new text -> edit
@@ -197,7 +218,10 @@ def back_handler(call: CallbackQuery):
         try:
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Главное меню", reply_markup=START_KEYBOARD)
         except:
-            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+            try:
+                bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+            except:
+                pass
             bot.send_message(chat_id=call.message.chat.id, text="Главное меню", reply_markup=START_KEYBOARD)
     else:
         bot.send_message(chat_id = call.message.chat.id, text = SUBSCRIBE_TEXT, reply_markup = CHECK_SUBSCRIPTION)
