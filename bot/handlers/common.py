@@ -1,7 +1,7 @@
 import random
 
 from functools import wraps
-from telebot.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto
 
 from bot import bot
 from bot.texts import START_TEXT, TARGET_CHAT_ID, SUBSCRIBE_TEXT, SUPPORT_TEXT, HOW_TO_TEXT
@@ -38,19 +38,28 @@ def where_to_go_handler(call: CallbackQuery):
     try:
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
     except:
+        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
         bot.send_message(chat_id = call.message.chat.id, text = "Выбери категорию", reply_markup = markup)
 
 
 def support_handler(call: CallbackQuery):
     """Обработчик кнопки Обратная связь"""
 
-    bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = SUPPORT_TEXT, reply_markup = BACK_BUTTON)
+    try:
+        bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = SUPPORT_TEXT, reply_markup = BACK_BUTTON)
+    except:
+        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        bot.send_message(chat_id = call.message.chat.id, text = SUPPORT_TEXT, reply_markup = BACK_BUTTON)
 
 
 def how_to_handler(call: CallbackQuery):
     """Обработчик кнопки Предложить заведение"""
 
-    bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = HOW_TO_TEXT, reply_markup = BACK_BUTTON)
+    try:
+        bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = HOW_TO_TEXT, reply_markup = BACK_BUTTON)
+    except:
+        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        bot.send_message(chat_id = call.message.chat.id, text = HOW_TO_TEXT, reply_markup = BACK_BUTTON)
 
 # Обработчик кнопок Категорий и Подкатегорий
 def categories_handler(call: CallbackQuery):
@@ -91,6 +100,7 @@ def categories_handler(call: CallbackQuery):
         try:
             bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = "Выбери категорию", reply_markup = markup)
         except:
+            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
             bot.send_message(chat_id = call.message.chat.id, text = "Выбери категорию", reply_markup = markup)
     else:
         # Получаем все места в категории
@@ -118,50 +128,77 @@ def categories_handler(call: CallbackQuery):
             places = all_places.exclude(pk=place_pk) if place_pk != -1 else all_places
         place = random.choice(list(places))
         shown_pks.append(place.pk)
-        if status == 0:
-            if category.description:
-                bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = category.description)
+        
         markup = InlineKeyboardMarkup()
-        try:
-            if place.web_link:
-                markup.add(InlineKeyboardButton(text="Перейти на сайт", url=place.web_link))
-            if place.vk_link:
-                markup.add(InlineKeyboardButton(text="Посмотреть в ВК", url=place.vk_link))
-            if place.instagram_link:
-                markup.add(InlineKeyboardButton(text="Посмотреть в Instagram", url=place.instagram_link))
-            if place.telegram_link:
-                markup.add(InlineKeyboardButton(text="Посмотреть в Telegram", url=place.telegram_link))
-            if place.map_link:
-                markup.add(InlineKeyboardButton(text="Проложить маршрут", url=f"{place.map_link}"))
-            markup.add(InlineKeyboardButton(
-                text="Следующее место",
-                callback_data=f"category_{category.pk}_1_{place.pk}_{','.join(map(str, shown_pks))}"
-            ))
-        except Exception as e:
-            bot.send_message(chat_id=call.message.chat.id, text=e)
-        try:
-            if category.parent_category:
-                markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
-            else:
-                markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
-        except Exception as e:
-            bot.send_message(chat_id=call.message.chat.id, text=e)
+        if place.web_link:
+            markup.add(InlineKeyboardButton(text="Перейти на сайт", url=place.web_link))
+        if place.vk_link:
+            markup.add(InlineKeyboardButton(text="Посмотреть в ВК", url=place.vk_link))
+        if place.instagram_link:
+            markup.add(InlineKeyboardButton(text="Посмотреть в Instagram", url=place.instagram_link))
+        if place.telegram_link:
+            markup.add(InlineKeyboardButton(text="Посмотреть в Telegram", url=place.telegram_link))
+        if place.map_link:
+            markup.add(InlineKeyboardButton(text="Проложить маршрут", url=f"{place.map_link}"))
+        markup.add(InlineKeyboardButton(
+            text="Следующее место",
+            callback_data=f"category_{category.pk}_1_{place.pk}_{','.join(map(str, shown_pks))}"
+        ))
+
+        if category.parent_category:
+            markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
+        else:
+            markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
         markup.add(back_menu)
+
+        place_text = place.get_text()
+        if status == 0 and category.description:
+            place_text = f"{category.description}\n\n{place_text}"
+
         try:
-            if place.photo:
-                with open(place.photo.path, 'rb') as photo:
-                    bot.send_photo(chat_id = call.message.chat.id, photo = photo, caption = place.get_text(), reply_markup = markup)
-            else:
-                bot.send_message(chat_id = call.message.chat.id, text = place.get_text(), reply_markup = markup)
+            # status=0: первое место, call.message - текстовое.
+            # status=1: следующее место, call.message - от предыдущего места (может быть с фото).
+            if status == 0:
+                if place.photo:
+                    # Нельзя отредактировать текстовое сообщение в сообщение с фото.
+                    bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                    with open(place.photo.path, 'rb') as photo:
+                        bot.send_photo(chat_id=call.message.chat.id, photo=photo, caption=place_text, reply_markup=markup)
+                else:
+                    bot.edit_message_text(text=place_text, chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
+            elif status == 1:
+                has_prev_photo = call.message.photo is not None
+                if place.photo:
+                    with open(place.photo.path, 'rb') as photo_file:
+                        if has_prev_photo:
+                             media = InputMediaPhoto(media=photo_file.read(), caption=place_text)
+                             bot.edit_message_media(media=media, chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
+                        else:
+                            # prev text, new photo -> delete and send
+                            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                            bot.send_photo(chat_id=call.message.chat.id, photo=photo_file, caption=place_text, reply_markup=markup)
+                else: # no new photo
+                    if has_prev_photo:
+                        # prev photo, new text -> delete and send
+                        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                        bot.send_message(chat_id=call.message.chat.id, text=place_text, reply_markup=markup)
+                    else:
+                        # prev text, new text -> edit
+                        bot.edit_message_text(text=place_text, chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
         except Exception as e:
-            bot.send_message(chat_id=call.message.chat.id, text=e)
+            bot.send_message(chat_id=call.message.chat.id, text=f"Произошла ошибка: {e}")
+
 
 # Обработчики служебных кнопок
 def back_handler(call: CallbackQuery):
     """Обработчик кнопки назад"""
     bot.clear_step_handler_by_chat_id(chat_id=call.message.chat.id)
     if bot.get_chat_member(chat_id = TARGET_CHAT_ID, user_id = call.message.chat.id).status in ["member", "administrator", "creator"]:
-        bot.send_message(chat_id = call.message.chat.id, text = "Главное меню", reply_markup = START_KEYBOARD)
+        try:
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Главное меню", reply_markup=START_KEYBOARD)
+        except:
+            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+            bot.send_message(chat_id=call.message.chat.id, text="Главное меню", reply_markup=START_KEYBOARD)
     else:
         bot.send_message(chat_id = call.message.chat.id, text = SUBSCRIBE_TEXT, reply_markup = CHECK_SUBSCRIPTION)
 
