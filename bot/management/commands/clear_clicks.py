@@ -11,5 +11,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         categories = Category.objects.all()
         for category in categories:
+            category.prev_day_clicks = category.day_clicks
             category.day_clicks = 0
             category.save()

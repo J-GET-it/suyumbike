@@ -19,8 +19,8 @@ class Category(models.Model):
     week_clicks = models.IntegerField(verbose_name="Количество кликов за текущую неделю", null=True, blank=True, default=0)
     month_clicks = models.IntegerField(verbose_name="Количество кликов за текущий месяц", null=True, blank=True, default=0)
     prev_day_clicks = models.IntegerField(verbose_name="Количество кликов за вчера", null=True, blank=True, default=0)
-    prev_week_clicks = models.IntegerField(verbose_name="Количество кликов за текущую неделю", null=True, blank=True, default=0)
-    prev_month_clicks = models.IntegerField(verbose_name="Количество кликов за текущий месяц", null=True, blank=True, default=0)
+    prev_week_clicks = models.IntegerField(verbose_name="Количество кликов за прошлую неделю", null=True, blank=True, default=0)
+    prev_month_clicks = models.IntegerField(verbose_name="Количество кликов за прошлый месяц", null=True, blank=True, default=0)
 
     all_clicks = models.IntegerField(verbose_name="Количество кликов за все время", null=True, blank=True, default=0)
 
