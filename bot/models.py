@@ -14,7 +14,9 @@ class Category(models.Model):
     name = models.CharField(max_length=200, verbose_name="Название категории")
     description = models.CharField(max_length=200, verbose_name="Короткое описание категории", null=True, blank=True)
     order = models.IntegerField(verbose_name="Порядковый номер", null=True, blank=True)
-
+    day_clicks = models.IntegerField(verbose_name="Количество кликов за день", null=True, blank=True, default=0)
+    all_clicks = models.IntegerField(verbose_name="Количество кликов за все время", null=True, blank=True, default=0)
+    
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"

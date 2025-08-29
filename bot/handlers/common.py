@@ -97,6 +97,11 @@ def categories_handler(call: CallbackQuery):
         shown_pks = []
     category = Category.objects.get(pk=pk_)
     
+    # Добавляем нажатие в статистику по категории
+    category.day_clicks += 1
+    category.all_clicks += 1
+    category.save()
+
     if Category.objects.filter(parent_category = category).exists():
         markup = InlineKeyboardMarkup()
         for category_ in Category.objects.filter(parent_category = category).order_by('order'):
