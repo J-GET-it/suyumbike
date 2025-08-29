@@ -105,6 +105,8 @@ def categories_handler(call: CallbackQuery):
     # Добавляем нажатие в статистику по категории, если нажатие было из списка категорий
     if status == 0 and len(call.data.split("_")) != 3:
         category.day_clicks += 1
+        category.week_clicks += 1
+        category.month_clicks += 1
         category.all_clicks += 1
         category.save()
 
