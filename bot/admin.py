@@ -27,7 +27,8 @@ class PlaceAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'parent_category', 'order']
+    list_display = ['name', 'parent_category', 'order', 'day_clicks', 'all_clicks']
+    list_filter = ['day_clicks', 'all_clicks']
     readonly_fields = ['day_clicks', 'all_clicks']
 
 @admin.register(User)
