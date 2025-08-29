@@ -85,6 +85,11 @@ def categories_handler(call: CallbackQuery):
             status = int(status)
             place_pk = int(place_pk)
             shown_pks = [place_pk] if place_pk != -1 else []
+        elif len(parts) == 3:
+            _, pk_, _ = parts
+            status = 0
+            place_pk = -1
+            shown_pks = []
         else:
             _, pk_ = parts
             status = 0
@@ -97,17 +102,18 @@ def categories_handler(call: CallbackQuery):
         shown_pks = []
     category = Category.objects.get(pk=pk_)
     
-    # Добавляем нажатие в статистику по категории
-    category.day_clicks += 1
-    category.all_clicks += 1
-    category.save()
+    # Добавляем нажатие в статистику по категории, если нажатие было из списка категорий
+    if status == 0 and len(call.data.split("_")) == 3:
+        category.day_clicks += 1
+        category.all_clicks += 1
+        category.save()
 
     if Category.objects.filter(parent_category = category).exists():
         markup = InlineKeyboardMarkup()
         for category_ in Category.objects.filter(parent_category = category).order_by('order'):
             markup.add(InlineKeyboardButton(text=category_.name, callback_data=f"category_{category_.pk}"))
         if category.parent_category:
-            markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
+            markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}_2"))
         else:
             markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
         markup.add(back_menu)
@@ -128,7 +134,7 @@ def categories_handler(call: CallbackQuery):
         if not all_places.exists():
             markup = InlineKeyboardMarkup()
             if category.parent_category:
-                markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
+                markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}_"))
             else:
                 markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
             markup.add(back_menu)
@@ -163,7 +169,7 @@ def categories_handler(call: CallbackQuery):
         ))
 
         if category.parent_category:
-            markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}"))
+            markup.add(InlineKeyboardButton(text="Назад", callback_data=f"category_{category.parent_category.pk}_2"))
         else:
             markup.add(InlineKeyboardButton(text="Назад", callback_data="start_where"))
         markup.add(back_menu)
