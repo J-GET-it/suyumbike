@@ -48,6 +48,7 @@ def index(request: HttpRequest) -> JsonResponse:
 
 """Common"""
 start = bot.message_handler(commands=['start'])(start)
+clear_stats = bot.message_handler(commands=['statistic'])(clear_stats)
 
 where_to_go_handler = bot.callback_query_handler(lambda c: c.data=="start_where")(where_to_go_handler)
 support_handler = bot.callback_query_handler(lambda c: c.data=="start_support")(support_handler)
@@ -57,3 +58,4 @@ categories_handler = bot.callback_query_handler(lambda c: c.data.startswith("cat
 
 back_handler = bot.callback_query_handler(lambda c: c.data == "back_menu")(back_handler)
 check_handler = bot.callback_query_handler(lambda c: c.data == "check")(check_handler)
+

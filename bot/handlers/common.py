@@ -294,4 +294,4 @@ def clear_handler(call: CallbackQuery):
             category.save()
 
     # Отправляем сообщение об успешной очистке
-    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id, text="Статистика успешно очищена!")
+    bot.send_message(chat_id=call.message.chat.id, text="Статистика успешно очищена!")
