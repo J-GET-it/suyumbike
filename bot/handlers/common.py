@@ -5,7 +5,7 @@ from telebot.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 
 from bot import bot
 from bot.texts import START_TEXT, TARGET_CHAT_ID, SUBSCRIBE_TEXT, SUPPORT_TEXT, HOW_TO_TEXT
-from bot.keyboards import START_KEYBOARD, CHECK_SUBSCRIPTION, BACK_BUTTON, back_menu
+from bot.keyboards import START_KEYBOARD, CHECK_SUBSCRIPTION, BACK_BUTTON, back_menu, STATISTICS_KEYBOARD
 from bot.models import Category, Place
 from bot.models import User
 from datetime import date
@@ -255,3 +255,43 @@ def check_handler(call: CallbackQuery):
     else:
         bot.send_message(chat_id = call.message.chat.id, text = SUBSCRIBE_TEXT, reply_markup = CHECK_SUBSCRIPTION)
 
+
+def clear_stats(message: Message):
+    """Обработчик команды /statistic"""
+    bot.send_message(chat_id=message.chat.id, text="Выберите статистику для очистки\n\n**Внимание! После нажатия сотрется вся статистика для всех позиций**", reply_markup = STATISTICS_KEYBOARD, parse_mode="Markdown")
+
+
+def clear_handler(call: CallbackQuery):
+    """Обработчик кнопок очистки статистики"""
+    _, type_ = call.data.split("_")
+
+    if type_ == "places":
+        # Очищаем счетчики просмотров у всех мест
+        places = Place.objects.all()
+        for place in places:
+            place.all_clicks = 0
+            place.day_clicks = 0
+            place.week_clicks = 0
+            place.month_clicks = 0
+            place.prev_day_clicks = 0
+            place.prev_week_clicks = 0
+            place.prev_month_clicks = 0
+            
+            place.save()
+
+    else:
+        # Очищаем счетчики просмотров у всех категорий
+        categories = Category.objects.all()
+        for category in categories:
+            category.all_clicks = 0
+            category.day_clicks = 0
+            category.week_clicks = 0
+            category.month_clicks = 0
+            category.prev_day_clicks = 0
+            category.prev_week_clicks = 0
+            category.prev_month_clicks = 0
+            
+            category.save()
+
+    # Отправляем сообщение об успешной очистке
+    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id, text="Статистика успешно очищена!")

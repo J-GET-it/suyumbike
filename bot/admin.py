@@ -29,7 +29,6 @@ class PlaceAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'parent_category', 'order', 'day_clicks', 'prev_day_clicks', 'week_clicks', 'prev_week_clicks', 'month_clicks', 'prev_month_clicks', 'all_clicks',]
     list_filter = ['day_clicks', 'all_clicks']
-    readonly_fields = ['day_clicks', 'month_clicks', 'week_clicks', 'all_clicks', 'prev_day_clicks', 'prev_week_clicks', 'prev_month_clicks',]
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):

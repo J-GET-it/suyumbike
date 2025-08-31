@@ -14,6 +14,11 @@ CHECK_SUBSCRIPTION = InlineKeyboardMarkup()
 check_button = InlineKeyboardButton(text="✅ Проверить подписку", callback_data="check")
 CHECK_SUBSCRIPTION.add(check_button)
 
+STATISTICS_KEYBOARD = InlineKeyboardMarkup()
+places_clear = InlineKeyboardButton(text="Статистика по местам", callback_data="clear_places")  
+categories_clear = InlineKeyboardButton(text="Статистика по категориям", callback_data="clear_categories") 
+STATISTICS_KEYBOARD.add(places_clear).add(categories_clear)
+
 """CATEGORIES = InlineKeyboardMarkup()
 food_button = InlineKeyboardButton(text="🍕 Еда и напитки", callback_data="categ_food")
 activities_button = InlineKeyboardButton(text="🎮 Отдых и развлечения", callback_data="categ_activities")
