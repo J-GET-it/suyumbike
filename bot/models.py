@@ -46,6 +46,16 @@ class Place(models.Model):
     average_check = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Средний чек", null=True, blank=True)
     rating = models.DecimalField(max_digits=3, decimal_places=1, verbose_name="Рейтинг", null=True, blank=True)
     
+    # Счетчики просмотров
+    day_clicks = models.IntegerField(verbose_name="Количество просмотров за день", null=True, blank=True, default=0)
+    week_clicks = models.IntegerField(verbose_name="Количество просмотров за текущую неделю", null=True, blank=True, default=0)
+    month_clicks = models.IntegerField(verbose_name="Количество просмотров за текущий месяц", null=True, blank=True, default=0)
+    prev_day_clicks = models.IntegerField(verbose_name="Количество просмотров за вчера", null=True, blank=True, default=0)
+    prev_week_clicks = models.IntegerField(verbose_name="Количество просмотров за прошлую неделю", null=True, blank=True, default=0)
+    prev_month_clicks = models.IntegerField(verbose_name="Количество просмотров за прошлый месяц", null=True, blank=True, default=0)
+
+    all_clicks = models.IntegerField(verbose_name="Количество кликов за все время", null=True, blank=True, default=0)
+
     # Необязательные поля
     web_link = models.CharField(blank=True, null=True,max_length=500, verbose_name="Ссылка на сайт")
     map_link = models.CharField(blank=True, null=True,max_length=500,  verbose_name="Ссылка на Яндекс Картах")

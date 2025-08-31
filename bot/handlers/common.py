@@ -151,8 +151,16 @@ def categories_handler(call: CallbackQuery):
         if not places.exists():
             shown_pks = []
             places = all_places.exclude(pk=place_pk) if place_pk != -1 else all_places
+
         place = random.choice(list(places))
         shown_pks.append(place.pk)
+
+        # Обновляем счетчики просмотров
+        place.day_clicks += 1
+        place.week_clicks += 1
+        place.month_clicks += 1
+        place.all_clicks += 1
+        place.save()
         
         markup = InlineKeyboardMarkup()
         if place.web_link:
