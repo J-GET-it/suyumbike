@@ -23,6 +23,9 @@ class PlaceAdmin(admin.ModelAdmin):
         ('Дата показа', {
             'fields': ('date_until',)
         }),
+        ('Статистика', {
+            'fields': ('day_clicks', 'prev_day_clicks', 'week_clicks', 'prev_week_clicks', 'month_clicks', 'prev_month_clicks', 'all_clicks',)
+        }),
     )
 
 @admin.register(Category)
