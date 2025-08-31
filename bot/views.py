@@ -59,4 +59,4 @@ categories_handler = bot.callback_query_handler(lambda c: c.data.startswith("cat
 back_handler = bot.callback_query_handler(lambda c: c.data == "back_menu")(back_handler)
 check_handler = bot.callback_query_handler(lambda c: c.data == "check")(check_handler)
 
-clear_handler = bot.callback_query_handler(lambda c: c.data.startswith("clear"))(clear_handler)
+clear_handler = bot.callback_query_handler(lambda c: c.data.startswith("clear_"))(clear_handler)
